@@ -26,21 +26,22 @@ really a list containing a function to
 2.  get the value of the vector
 3.  set the value of the mean
 4.  get the value of the mean
-
+This function creates a special "matrix" object
+    that can cache its inverse
 <!-- -->
 
-    makeVector <- function(x = numeric()) {
+    makeCacheMatrix <- function(x = matrix()) {
             m <- NULL
             set <- function(y) {
                     x <<- y
                     m <<- NULL
             }
             get <- function() x
-            setmean <- function(mean) m <<- mean
-            getmean <- function() m
+            setinverse <- function(inverse) m <<- inverse
+            getinverse <- function() m
             list(set = set, get = get,
-                 setmean = setmean,
-                 getmean = getmean)
+                 setinverse = setinverse,
+                 getinverse = getinverse)
     }
 
 The following function calculates the mean of the special "vector"
@@ -50,17 +51,18 @@ cache and skips the computation. Otherwise, it calculates the mean of
 the data and sets the value of the mean in the cache via the `setmean`
 function.
 
-    cachemean <- function(x, ...) {
-            m <- x$getmean()
+    cachesolve <- function(x, ...) {
+            m <- x$getinverse()
             if(!is.null(m)) {
                     message("getting cached data")
                     return(m)
             }
             data <- x$get()
             m <- mean(data, ...)
-            x$setmean(m)
+            x$setinverse(m)
             m
     }
+
 
 ### Assignment: Caching the Inverse of a Matrix
 
